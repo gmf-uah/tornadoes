@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive week-by-week chart of historical tornado reports across the American South.">
+  <title>American South Tornado Seasonality</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #263238;
+      background: #f5f8f8;
+    }
+    body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+    }
+    p {
+      margin: 0 0 18px;
+      color: #526267;
+    }
+    .chart {
+      width: 100%;
+      height: min(72vh, 700px);
+      min-height: 420px;
+      border: 1px solid #d5e0e2;
+      border-radius: 10px;
+      background: #fff;
+    }
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .chart { height: 65vh; min-height: 360px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>American South Tornado Seasonality</h1>
+    <p>Weekly tornado reports from 1950–2026. Hover or focus a bar to see its total, annual mean, and annual median.</p>
+    <object class="chart"
+            data="output/south_tornadoes_by_week_1950_2026.svg"
+            type="image/svg+xml"
+            aria-label="Interactive chart of American South tornado reports by week">
+      <p>Your browser could not display the chart. <a href="output/south_tornadoes_by_week_1950_2026.svg">Open the SVG directly</a>.</p>
+    </object>
+  </main>
+</body>
+</html>
