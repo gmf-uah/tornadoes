@@ -142,14 +142,14 @@ def render_svg(rows: list[dict[str, str]], output: str | Path, *, title: str = "
     max_count = max(counts, default=0)
     axis_max, tick_values = _nice_axis(max_count)
     plot_max = max(axis_max, 1)
-    annual_means, annual_medians, first_annual_year, last_annual_year = weekly_annual_stats(rows)
+    annual_means, annual_medians, _, _ = weekly_annual_stats(rows)
     width, height = 1200, 560
     left, right, top, bottom = 76, 28, 72, 132
     plot_w, plot_h = width - left - right, height - top - bottom
     out = [f'<svg xmlns="{SVG_NS}" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {width} {height}" role="img" aria-labelledby="chartTitle chartDesc">']
     out += ['<title id="chartTitle">' + html.escape(title) + '</title>',
             '<desc id="chartDesc">52 bars show tornado reports by week of the calendar year. Hover or focus a bar for its week and count.</desc>',
-            '<style>text{font-family:system-ui,-apple-system,Segoe UI,sans-serif;fill:#263238}.axis{stroke:#697579;stroke-width:1}.grid{stroke:#dbe3e5;stroke-width:1}.bar{fill:#287c8e;transition:fill .12s,opacity .12s}.week-group.active .bar{fill:#e76f51;stroke:#183e46;stroke-width:1.5}.hit-area{fill:transparent;pointer-events:all}.week-group{cursor:pointer}.month-bracket{stroke:#50646a;stroke-width:1.2;fill:none}.month-label{font-size:12px;font-weight:600}.tick{font-size:11px;fill:#526267}.tooltip{display:none;pointer-events:none}.tooltip.visible{display:block}.tooltip rect{fill:#172b32;rx:5}.tooltip text{fill:#fff;font-size:12px}.small{font-size:11px;fill:#54666a}</style>']
+            '<style>text{font-family:system-ui,-apple-system,Segoe UI,sans-serif;fill:#263238}.axis{stroke:#697579;stroke-width:1}.grid{stroke:#dbe3e5;stroke-width:1}.bar{fill:#287c8e;transition:fill .12s,opacity .12s}.week-group.active .bar{fill:#e76f51}.week-group{cursor:pointer}.week-group:focus{outline:none!important}.hit-area{fill:transparent;pointer-events:all;stroke:none}.month-bracket{stroke:#50646a;stroke-width:1.2;fill:none}.month-label{font-size:12px;font-weight:600}.tick{font-size:11px;fill:#526267}.source-note{font-size:11px;fill:#778589}.source-link{fill:#778589;text-decoration:underline}.tooltip{display:none;pointer-events:none}.tooltip.visible{display:block}.tooltip rect{fill:#172b32;rx:5}.tooltip text{fill:#fff;font-size:12px}</style>']
     out.append(f'<text x="{left}" y="32" font-size="20" font-weight="700">{html.escape(title)}</text>')
 
     for tick in tick_values:
@@ -158,6 +158,7 @@ def render_svg(rows: list[dict[str, str]], output: str | Path, *, title: str = "
         out.append(f'<text class="tick" x="{left-10}" y="{y+4:.2f}" text-anchor="end">{tick:,}</text>')
     out.append(f'<line class="axis" x1="{left}" x2="{left}" y1="{top}" y2="{top+plot_h}"/><line class="axis" x1="{left}" x2="{width-right}" y1="{top+plot_h}" y2="{top+plot_h}"/>')
     out.append(f'<text transform="translate(22 {top+plot_h/2}) rotate(-90)" text-anchor="middle" font-size="13">Number of tornadoes</text>')
+    out.append(f'<a xlink:href="https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/" target="_blank"><text class="source-note source-link" x="{left}" y="{height-12}">Source: NOAA NCEI Storm Events Database</text></a>')
 
     bar_w = plot_w / WEEK_COUNT
     tooltip_elements: list[str] = []
@@ -184,9 +185,6 @@ def render_svg(rows: list[dict[str, str]], output: str | Path, *, title: str = "
         x1, x2 = left + plot_w * start / WEEK_COUNT, left + plot_w * end / WEEK_COUNT
         out.append(f'<path class="month-bracket" d="M{x1:.2f},{bracket_y+5} V{bracket_y} H{x2:.2f} V{bracket_y+5}"/>')
         out.append(f'<text class="month-label" x="{(x1+x2)/2:.2f}" y="{label_y}" text-anchor="middle">{month}</text>')
-    out.append(f'<text class="small" x="{left}" y="{height-28}">Annual mean/median use complete years {first_annual_year}-{last_annual_year}.</text>')
-    out.append(f'<text class="small" x="{left}" y="{height-12}">52 seven-day bins anchored on Jan 1; Feb 29 is grouped with Feb 28.</text>')
-    out.append(f'<text class="small" x="{width-right}" y="{height-12}" text-anchor="end">Maximum observed: {max_count:,} per week</text>')
     # This overlay is emitted after every bar and axis element so no bar can
     # paint over a visible tooltip.
     out.append('<g id="tooltipOverlay" aria-hidden="true">' + "".join(tooltip_elements) + "</g>")

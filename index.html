@@ -14,18 +14,22 @@
     }
     body {
       max-width: 1280px;
+      min-height: 100vh;
+      box-sizing: border-box;
       margin: 0 auto;
       padding: 24px;
+      display: grid;
+      place-items: center;
     }
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(1.5rem, 3vw, 2.1rem);
+    main {
+      width: 100%;
     }
     p {
       margin: 0 0 18px;
       color: #526267;
     }
     .chart {
+      display: block;
       width: 100%;
       height: min(72vh, 700px);
       min-height: 420px;
@@ -41,8 +45,6 @@
 </head>
 <body>
   <main>
-    <h1>American South Tornado Seasonality</h1>
-    <p>Weekly tornado reports from 1950–2026. Hover or focus a bar to see its total, annual mean, and annual median.</p>
     <object class="chart"
             data="output/south_tornadoes_by_week_1950_2026.svg"
             type="image/svg+xml"
